@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Better Buy</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    
+    <!-- Google Fonts: Kanit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Custom Tailwind Config & Styles -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Kanit', 'sans-serif'],
+                    },
+                    colors: {
+                        cream: {
+                            50: '#FFFDF9',
+                            100: '#FFF8ED',
+                            200: '#FFEED4',
+                        },
+                        pink: {
+                            50: '#FFF5F7',
+                            100: '#FFE4E8',
+                            200: '#FECDD6',
+                            300: '#FDA4AF',
+                            400: '#FB7185',
+                            500: '#F43F5E',
+                        },
+                        brown: {
+                            800: '#594A4E',
+                            900: '#4A3F3F',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(253, 164, 175, 0.15)',
+                        'card': '0 4px 20px -2px rgba(253, 164, 175, 0.1)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FFFDF9;
+            background-image: radial-gradient(#FFE4E8 1px, transparent 1px);
+            background-size: 32px 32px;
+            color: #594A4E;
+        }
+        /* ซ่อนลูกศรใน input type number เฉพาะ class hide-arrows */
+        .hide-arrows::-webkit-inner-spin-button,
+        .hide-arrows::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .hide-arrows {
+            -moz-appearance: textfield;
+        }
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .fade-enter-from, .fade-leave-to {
+            opacity: 0;
+            transform: translateY(10px) scale(0.98);
+        }
+        .best-value-card {
+            animation: pulse-border 2s infinite;
+        }
+        @keyframes pulse-border {
+            0% { border-color: #FB7185; box-shadow: 0 0 0 0 rgba(251, 113, 133, 0.4); }
+            70% { border-color: #FDA4AF; box-shadow: 0 0 0 10px rgba(251, 113, 133, 0); }
+            100% { border-color: #FB7185; box-shadow: 0 0 0 0 rgba(251, 113, 133, 0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+
+    <div id="app" class="w-full max-w-6xl mx-auto space-y-8" v-cloak>
+        
+        <!-- Header -->
+        <header class="text-center space-y-3">
+            <div class="inline-flex items-center justify-center p-3 bg-pink-100 rounded-full mb-2 shadow-sm text-pink-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256"><path fill="currentColor" d="M240 104a8 8 0 0 1-8 8h-4.32l-14.86 89.17A16 16 0 0 1 197.05 216H58.95a16 16 0 0 1-15.77-14.83L28.32 112H24a8 8 0 0 1 0-16h21.43l35.8-59.66a8 8 0 1 1 13.72 8.23L62.7 104h130.6l-32.25-59.43a8 8 0 0 1 13.72-8.23L210.57 96H232a8 8 0 0 1 8 8M58.95 200h138.1l14.67-88H44.28ZM96 168a8 8 0 0 0-8-8H72a8 8 0 0 0 0 16h16a8 8 0 0 0 8-8m56 0a8 8 0 0 0-8-8h-16a8 8 0 0 0 0 16h16a8 8 0 0 0 8-8m48 0a8 8 0 0 0-8-8h-16a8 8 0 0 0 0 16h16a8 8 0 0 0 8-8"/></svg>
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-semibold text-brown-900">The Better Buy</h1>
+            <p class="text-brown-800/70 text-sm sm:text-base max-w-md mx-auto">
+                Make smart shopping decisions easily. Enter price, content size, and promotions to find which item gives you the most value per cost unit.
+            </p>
+        </header>
+
+        <!-- Options: 2 or 3 items -->
+        <div class="flex justify-center">
+            <div class="bg-white p-1.5 rounded-full inline-flex shadow-sm border border-pink-100">
+                <button @click="numItems = 2" 
+                    :class="['px-6 py-2 rounded-full text-sm font-medium transition-all duration-300', numItems === 2 ? 'bg-pink-100 text-pink-500 shadow-sm' : 'text-brown-800 hover:bg-pink-50']">
+                    Compare 2 Items
+                </button>
+                <button @click="numItems = 3" 
+                    :class="['px-6 py-2 rounded-full text-sm font-medium transition-all duration-300', numItems === 3 ? 'bg-pink-100 text-pink-500 shadow-sm' : 'text-brown-800 hover:bg-pink-50']">
+                    Compare 3 Items
+                </button>
+            </div>
+        </div>
+
+        <!-- Product Cards Grid -->
+        <div :class="['grid gap-6 transition-all duration-500', numItems === 2 ? 'grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto' : 'grid-cols-1 md:grid-cols-3 max-w-6xl mx-auto']">
+            
+            <transition-group name="fade">
+                <div v-for="(item, index) in visibleItems" :key="'item-'+index" 
+                    :class="['bg-white rounded-3xl p-6 sm:p-8 transition-all duration-300 relative border-2', 
+                            isBestValue(index) ? 'border-pink-400 shadow-soft best-value-card' : 'border-white shadow-card hover:shadow-soft hover:border-pink-50']">
+                    
+                    <!-- Crown for best value -->
+                    <div v-if="isBestValue(index)" class="absolute -top-4 -right-3 bg-pink-400 text-white p-2 rounded-full shadow-lg transform rotate-12">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path fill="currentColor" d="M235.69 82.52a12 12 0 0 0-11-2a11.9 11.9 0 0 0-7.36 7l-26.68 59.85l-51.52-87.35a12 12 0 0 0-20.73 0l-51.52 87.35L40.23 87.52a11.9 11.9 0 0 0-7.36-7a12 12 0 0 0-12.56 3.12A12 12 0 0 0 17 96.91l24 96A12 12 0 0 0 52.66 204h150.68a12 12 0 0 0 11.64-9.09l24-96a12 12 0 0 0-3.29-16.39ZM203.34 180H52.66l-18-72l35.69 15.28a12 12 0 0 0 15-4L128 46.85l42.66 72.43a12 12 0 0 0 15 4l35.69-15.28Z"/></svg>
+                    </div>
+
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 rounded-full bg-pink-50 flex items-center justify-center text-pink-400 font-bold text-lg">
+                            {{ index + 1 }}
+                        </div>
+                        <h2 class="text-xl font-medium text-brown-900">Item {{ index + 1 }}</h2>
+                    </div>
+
+                    <div class="space-y-5">
+                        <!-- Promotion Type -->
+                        <div>
+                            <label class="block text-sm font-medium text-brown-800 mb-1">Promotion</label>
+                            <select v-model="item.promo" class="w-full bg-cream-50 border border-pink-100 text-brown-900 text-sm rounded-xl focus:ring-pink-200 focus:border-pink-300 block p-3 pr-10 outline-none transition-colors appearance-none cursor-pointer bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23594A4E%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_1rem_center] bg-[length:1.2em_1.2em]">
+                                <option value="normal">Normal Price (No promo)</option>
+                                <option value="1get1">Buy 1 Get 1 Free</option>
+                                <option value="2get1">Buy 2 Get 1 Free</option>
+                            </select>
+                        </div>
+
+                        <!-- Weight per piece -->
+                        <div>
+                            <label class="block text-sm font-medium text-brown-800 mb-1">Net Content per piece <span class="text-brown-800/50">(g / ml / oz)</span></label>
+                            <input type="number" v-model.number="item.weight" min="0" class="hide-arrows w-full bg-cream-50 border border-pink-100 text-brown-900 text-sm rounded-xl focus:ring-pink-200 focus:border-pink-300 block p-3 outline-none transition-colors">
+                        </div>
+
+                        <!-- Quantity (Show only when Normal promotion) -->
+                        <div v-if="item.promo === 'normal'">
+                            <label class="block text-sm font-medium text-brown-800 mb-1">Quantity <span class="text-brown-800/50">(per pack or set)</span></label>
+                            <input type="number" v-model.number="item.qty" min="1" step="1" @change="ensureMinQty(item)" @blur="ensureMinQty(item)" class="w-full bg-cream-50 border border-pink-100 text-brown-900 text-sm rounded-xl focus:ring-pink-200 focus:border-pink-300 block p-3 outline-none transition-colors">
+                        </div>
+
+                        <!-- Price -->
+                        <div>
+                            <label class="block text-sm font-medium text-brown-800 mb-1">Price</label>
+                            <div class="relative">
+                                <input type="number" v-model.number="item.price" min="0" class="hide-arrows w-full bg-cream-50 border border-pink-100 text-brown-900 text-sm rounded-xl focus:ring-pink-200 focus:border-pink-300 block p-3 outline-none transition-colors">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Individual Result Summary -->
+                    <div class="mt-6 pt-5 border-t border-pink-50">
+                        <div v-if="results[index].isValid" class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-brown-800/70">Total Cost:</span>
+                                <span class="font-medium text-brown-900">{{ results[index].cost.toLocaleString() }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-brown-800/70">Total Content:</span>
+                                <span class="font-medium text-brown-900">{{ results[index].totalWeight.toLocaleString() }} units</span>
+                            </div>
+                            <div class="flex justify-between items-end mt-2 pt-2 bg-pink-50/50 p-3 rounded-xl">
+                                <span class="text-sm font-medium text-pink-500">Amount per 1 Cost Unit:</span>
+                                <div class="text-right">
+                                    <span class="text-2xl font-semibold text-pink-600 leading-none">{{ results[index].valuePerBaht.toFixed(2) }}</span>
+                                    <span class="text-xs text-pink-400 block mt-0.5">units / cost</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else class="text-center py-4 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                            <span class="text-sm text-gray-400">Please complete all fields</span>
+                        </div>
+                    </div>
+                </div>
+            </transition-group>
+        </div>
+
+        <!-- Summary Banner (Only shows when there's a calculation) -->
+        <transition name="fade">
+            <div v-if="hasValidCalculations" class="max-w-4xl mx-auto bg-gradient-to-r from-pink-400 to-pink-300 rounded-3xl p-6 sm:p-8 text-white shadow-soft relative overflow-hidden flex flex-col sm:flex-row items-center justify-between text-center sm:text-left">
+                <!-- Decorative background elements -->
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl"></div>
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-white opacity-10 rounded-full blur-xl"></div>
+                
+                <div class="relative z-10 space-y-1 mb-4 sm:mb-0">
+                    <h3 class="text-pink-50 text-sm font-medium">Comparison Summary</h3>
+                    <div class="text-2xl sm:text-3xl font-semibold">
+                        {{ winningMessage }}
+                    </div>
+                </div>
+                
+                <div class="relative z-10 bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-3 border border-white/30 flex flex-col items-center">
+                    <span class="text-pink-50 text-xs mb-1">Best Value</span>
+                    <div class="flex items-baseline space-x-1">
+                        <span class="text-3xl font-bold">{{ bestValue.toFixed(2) }}</span>
+                        <span class="text-sm">units / cost</span>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
+        <!-- Footer -->
+        <footer class="text-center pb-8 pt-4">
+            <p class="text-xs text-brown-800/40">Clean & Minimal Calculator. Made for smart shopping.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const { createApp, ref, computed } = Vue;
+
+        createApp({
+            setup() {
+                const numItems = ref(2);
+                
+                // Initialize items state
+                const items = ref([
+                    { promo: 'normal', weight: null, qty: 1, price: null },
+                    { promo: 'normal', weight: null, qty: 1, price: null },
+                    { promo: 'normal', weight: null, qty: 1, price: null }
+                ]);
+
+                // Filter items based on selected quantity
+                const visibleItems = computed(() => {
+                    return items.value.slice(0, numItems.value);
+                });
+
+                // Calculate results for each item
+                const results = computed(() => {
+                    return visibleItems.value.map((item, index) => {
+                        const price = parseFloat(item.price);
+                        const weight = parseFloat(item.weight);
+                        const qty = item.promo === 'normal' ? parseFloat(item.qty) : 1;
+
+                        // Validation
+                        if (isNaN(price) || isNaN(weight) || isNaN(qty) || price <= 0 || weight <= 0 || qty < 1) {
+                            return { isValid: false, valuePerBaht: 0, cost: 0, totalWeight: 0, index };
+                        }
+
+                        let cost = 0;
+                        let totalWeight = 0;
+                        const baseWeight = weight * qty;
+
+                        // Logic based on promotion
+                        if (item.promo === 'normal') {
+                            // No promo: Pay for 1 unit, get 1 unit (multiplied by qty inside)
+                            cost = price;
+                            totalWeight = baseWeight;
+                        } else if (item.promo === '1get1') {
+                            // Buy 1 Get 1: Pay for 1 unit, get 2 units
+                            cost = price;
+                            totalWeight = baseWeight * 2;
+                        } else if (item.promo === '2get1') {
+                            // Buy 2 Get 1: Pay for 2 units, get 3 units
+                            cost = price * 2;
+                            totalWeight = baseWeight * 3;
+                        }
+
+                        const valuePerBaht = totalWeight / cost;
+
+                        return {
+                            isValid: true,
+                            valuePerBaht,
+                            cost,
+                            totalWeight,
+                            index
+                        };
+                    });
+                });
+
+                const hasValidCalculations = computed(() => {
+                    return results.value.some(r => r.isValid);
+                });
+
+                const bestValue = computed(() => {
+                    if (!hasValidCalculations.value) return 0;
+                    return Math.max(...results.value.filter(r => r.isValid).map(r => r.valuePerBaht));
+                });
+
+                const isBestValue = (index) => {
+                    if (!results.value[index].isValid) return false;
+                    // Prevent highlighting all as best if only one is filled or if value is 0
+                    if (bestValue.value === 0) return false; 
+                    
+                    // Check if there's more than one valid item for comparison
+                    const validItemsCount = results.value.filter(r => r.isValid).length;
+                    if (validItemsCount < 2) return false;
+
+                    return results.value[index].valuePerBaht === bestValue.value;
+                };
+
+                const winningMessage = computed(() => {
+                    const validResults = results.value.filter(r => r.isValid);
+                    if (validResults.length < 2) return "Waiting for data...";
+
+                    const bestResults = validResults.filter(r => r.valuePerBaht === bestValue.value);
+                    
+                    if (bestResults.length === validResults.length) {
+                        return "All items have the same value!";
+                    } else if (bestResults.length > 1) {
+                        const names = bestResults.map(r => `Item ${r.index + 1}`).join(' & ');
+                        return `${names} are the best value!`;
+                    } else {
+                        return `Item ${bestResults[0].index + 1} is the best value! 🎉`;
+                    }
+                });
+
+                const ensureMinQty = (item) => {
+                    if (item.qty === null || item.qty === undefined || item.qty < 1) {
+                        item.qty = 1;
+                    }
+                };
+
+                return {
+                    numItems,
+                    items,
+                    visibleItems,
+                    results,
+                    hasValidCalculations,
+                    bestValue,
+                    isBestValue,
+                    winningMessage,
+                    ensureMinQty
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
