@@ -4,6 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Better Buy</title>
+    <meta name="description" content="Make smart shopping decisions easily. Enter price, content size, and promotions to find which item gives you the most value per cost unit.">
+
+    <!-- Open Graph / Facebook / LINE / Chat apps -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="The Better Buy">
+    <meta property="og:description" content="Make smart shopping decisions easily. Enter price, content size, and promotions to find which item gives you the most value per cost unit.">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="The Better Buy">
+    <meta name="twitter:description" content="Make smart shopping decisions easily. Enter price, content size, and promotions to find which item gives you the most value per cost unit.">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X9VBTNJW98"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-X9VBTNJW98');
+    </script>
     
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛍️</text></svg>">
@@ -162,7 +183,7 @@
             
             <transition-group name="fade">
                 <div v-for="(item, index) in visibleItems" :key="'item-'+index" 
-                    :class="['bg-white rounded-3xl p-6 sm:p-8 transition-all duration-300 relative border-2', 
+                    :class="['product-card bg-white rounded-3xl p-6 sm:p-8 transition-all duration-300 relative border-2', 
                             isBestValue(index) ? 'border-pink-400 shadow-soft best-value-card' : 'border-white shadow-card hover:shadow-soft hover:border-pink-50']">
                     
                     <!-- Crown for best value -->
@@ -181,7 +202,7 @@
                         <!-- Promotion Type -->
                         <div>
                             <label class="block text-sm font-medium text-brown-800 mb-1">Promotion</label>
-                            <select v-model="item.promo" class="w-full bg-cream-50 border border-pink-100 text-brown-900 text-sm rounded-xl focus:ring-pink-200 focus:border-pink-300 block p-3 pr-10 outline-none transition-colors appearance-none cursor-pointer bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2376472e%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_1rem_center] bg-[length:1.2em_1.2em]">
+                            <select v-model="item.promo" @change="onPromoChange($event)" class="w-full bg-cream-50 border border-pink-100 text-brown-900 text-sm rounded-xl focus:ring-pink-200 focus:border-pink-300 block p-3 pr-10 outline-none transition-colors appearance-none cursor-pointer bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2376472e%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_1rem_center] bg-[length:1.2em_1.2em]">
                                 <option value="normal">Normal Price (No promo)</option>
                                 <option value="1get1">Buy 1 Get 1 Free</option>
                                 <option value="2get1">Buy 2 Get 1 Free</option>
@@ -191,20 +212,20 @@
                         <!-- Weight per piece -->
                         <div>
                             <label class="block text-sm font-medium text-brown-800 mb-1">Net Content per piece <span class="text-brown-800/50">(g / ml / oz)</span></label>
-                            <input type="number" v-model.number="item.weight" min="0" class="hide-arrows w-full bg-cream-50 border border-pink-100 text-brown-900 text-sm rounded-xl focus:ring-pink-200 focus:border-pink-300 block p-3 outline-none transition-colors">
+                            <input type="number" v-model.number="item.weight" min="0" enterkeyhint="next" @focus="$event.target.select()" @keydown.enter.prevent="focusNext($event)" class="card-input hide-arrows w-full bg-cream-50 border border-pink-100 text-brown-900 text-sm rounded-xl focus:ring-pink-200 focus:border-pink-300 block p-3 outline-none transition-colors">
                         </div>
 
                         <!-- Quantity (Show only when Normal promotion) -->
                         <div v-if="item.promo === 'normal'">
                             <label class="block text-sm font-medium text-brown-800 mb-1">Quantity</label>
-                            <input type="number" v-model.number="item.qty" min="1" step="1" @change="ensureMinQty(item)" @blur="ensureMinQty(item)" class="w-full bg-cream-50 border border-pink-100 text-brown-900 text-sm rounded-xl focus:ring-pink-200 focus:border-pink-300 block p-3 outline-none transition-colors">
+                            <input type="number" v-model.number="item.qty" min="1" step="1" enterkeyhint="next" @focus="$event.target.select()" @change="ensureMinQty(item)" @blur="ensureMinQty(item)" @keydown.enter.prevent="ensureMinQty(item); focusNext($event)" class="card-input w-full bg-cream-50 border border-pink-100 text-brown-900 text-sm rounded-xl focus:ring-pink-200 focus:border-pink-300 block p-3 outline-none transition-colors">
                         </div>
 
                         <!-- Price -->
                         <div>
                             <label class="block text-sm font-medium text-brown-800 mb-1">Price</label>
                             <div class="relative">
-                                <input type="number" v-model.number="item.price" min="0" class="hide-arrows w-full bg-cream-50 border border-pink-100 text-brown-900 text-sm rounded-xl focus:ring-pink-200 focus:border-pink-300 block p-3 outline-none transition-colors">
+                                <input type="number" v-model.number="item.price" min="0" enterkeyhint="next" @focus="$event.target.select()" @keydown.enter.prevent="focusNext($event)" class="card-input hide-arrows w-full bg-cream-50 border border-pink-100 text-brown-900 text-sm rounded-xl focus:ring-pink-200 focus:border-pink-300 block p-3 outline-none transition-colors">
                             </div>
                         </div>
                     </div>
@@ -244,7 +265,6 @@
                 <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-white opacity-25 rounded-full blur-xl"></div>
                 
                 <div class="relative z-10 space-y-1 mb-4 sm:mb-0">
-                    <h3 class="text-brown-800/80 text-sm font-medium">Comparison Summary</h3>
                     <div class="text-2xl sm:text-3xl font-semibold text-brown-900 leading-normal" v-html="winningMessage">
                     </div>
                 </div>
@@ -372,6 +392,39 @@
                     }
                 };
 
+                const focusNext = (event) => {
+                    const inputs = Array.from(document.querySelectorAll('.card-input'))
+                        .filter(el => el.offsetParent !== null && !el.disabled);
+                    
+                    const currentIndex = inputs.indexOf(event.target);
+                    if (currentIndex !== -1) {
+                        if (currentIndex < inputs.length - 1) {
+                            const next = inputs[currentIndex + 1];
+                            next.focus();
+                            if (typeof next.select === 'function') {
+                                next.select();
+                            }
+                        } else {
+                            event.target.blur();
+                        }
+                    }
+                };
+
+                const onPromoChange = (event) => {
+                    const card = event.target.closest('.product-card');
+                    if (card) {
+                        setTimeout(() => {
+                            const nextInput = card.querySelector('input.card-input');
+                            if (nextInput) {
+                                nextInput.focus();
+                                if (typeof nextInput.select === 'function') {
+                                    nextInput.select();
+                                }
+                            }
+                        }, 50);
+                    }
+                };
+
                 return {
                     numItems,
                     items,
@@ -381,7 +434,9 @@
                     bestValue,
                     isBestValue,
                     winningMessage,
-                    ensureMinQty
+                    ensureMinQty,
+                    focusNext,
+                    onPromoChange
                 };
             }
         }).mount('#app');
