@@ -5,16 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Better Buy</title>
     
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛍️</text></svg>">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Vue 3 -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     
-    <!-- Google Fonts: Kanit -->
+    <!-- Google Fonts: Kanit & Caprasimo (Cookie style) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Fraunces:opsz,wght@9..144,800..900&family=Kanit:wght@300;400;500;600&family=Shrikhand&display=swap" rel="stylesheet">
 
     <!-- Custom Tailwind Config & Styles -->
     <script>
@@ -22,7 +25,7 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Kanit', 'sans-serif'],
+                        sans: ['Fraunces', 'sans-serif'],
                     },
                     colors: {
                         cream: {
@@ -30,22 +33,42 @@
                             100: '#FFF8ED',
                             200: '#FFEED4',
                         },
+                        primary: {
+                            DEFAULT: '#eea7b9',
+                            50: '#fdf4f6',
+                            100: '#fae4e9',
+                            200: '#f5c9d3',
+                            300: '#f1b8c6',
+                            400: '#eea7b9',
+                            500: '#b84e68',
+                            600: '#9a3c53',
+                        },
+                        secondary: {
+                            DEFAULT: '#76472e',
+                            600: '#9b5e3d',
+                            700: '#885134',
+                            800: '#76472e',
+                            900: '#532f1c',
+                        },
                         pink: {
-                            50: '#FFF5F7',
-                            100: '#FFE4E8',
-                            200: '#FECDD6',
-                            300: '#FDA4AF',
-                            400: '#FB7185',
-                            500: '#F43F5E',
+                            50: '#fdf4f6',
+                            100: '#fae4e9',
+                            200: '#f5c9d3',
+                            300: '#f1b8c6',
+                            400: '#eea7b9',
+                            500: '#b84e68',
+                            600: '#9a3c53',
                         },
                         brown: {
-                            800: '#594A4E',
-                            900: '#4A3F3F',
+                            600: '#9b5e3d',
+                            700: '#885134',
+                            800: '#76472e',
+                            900: '#532f1c',
                         }
                     },
                     boxShadow: {
-                        'soft': '0 10px 40px -10px rgba(253, 164, 175, 0.15)',
-                        'card': '0 4px 20px -2px rgba(253, 164, 175, 0.1)',
+                        'soft': '0 10px 40px -10px rgba(238, 167, 185, 0.25)',
+                        'card': '0 4px 20px -2px rgba(238, 167, 185, 0.12)',
                     }
                 }
             }
@@ -53,10 +76,10 @@
     </script>
     <style>
         body {
-            background-color: #FFFDF9;
-            background-image: radial-gradient(#FFE4E8 1px, transparent 1px);
-            background-size: 32px 32px;
-            color: #594A4E;
+            background-color: #fef4f1;
+            background: linear-gradient(180deg, #fff9f7 0%, #fef4f1 55%, #fae8e1 100%);
+            background-attachment: fixed;
+            color: #76472e;
         }
         /* ซ่อนลูกศรใน input type number เฉพาะ class hide-arrows */
         .hide-arrows::-webkit-inner-spin-button,
@@ -78,9 +101,26 @@
             animation: pulse-border 2s infinite;
         }
         @keyframes pulse-border {
-            0% { border-color: #FB7185; box-shadow: 0 0 0 0 rgba(251, 113, 133, 0.4); }
-            70% { border-color: #FDA4AF; box-shadow: 0 0 0 10px rgba(251, 113, 133, 0); }
-            100% { border-color: #FB7185; box-shadow: 0 0 0 0 rgba(251, 113, 133, 0); }
+            0% { border-color: #eea7b9; box-shadow: 0 0 0 0 rgba(238, 167, 185, 0.45); }
+            70% { border-color: #f5c9d3; box-shadow: 0 0 0 10px rgba(238, 167, 185, 0); }
+            100% { border-color: #eea7b9; box-shadow: 0 0 0 0 rgba(238, 167, 185, 0); }
+        }
+        /* Cookie style title */
+        .cookie-title {
+            font-family: 'Caprasimo', 'Fraunces', cursive, serif;
+            color: #451811;
+            -webkit-text-stroke: 6px #ffffff;
+            paint-order: stroke fill;
+            filter: drop-shadow(0 5px 0 #fbdad1) drop-shadow(0 10px 16px rgba(69, 24, 17, 0.15));
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+            display: inline-block;
+        }
+        @media (min-width: 640px) {
+            .cookie-title {
+                -webkit-text-stroke: 8px #ffffff;
+                filter: drop-shadow(0 6px 0 #fbdad1) drop-shadow(0 14px 20px rgba(69, 24, 17, 0.16));
+            }
         }
     </style>
 </head>
@@ -89,27 +129,31 @@
     <div id="app" class="w-full max-w-6xl mx-auto space-y-8" v-cloak>
         
         <!-- Header -->
-        <header class="text-center space-y-3">
-            <div class="inline-flex items-center justify-center p-3 bg-pink-100 rounded-full mb-2 shadow-sm text-pink-500">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256"><path fill="currentColor" d="M240 104a8 8 0 0 1-8 8h-4.32l-14.86 89.17A16 16 0 0 1 197.05 216H58.95a16 16 0 0 1-15.77-14.83L28.32 112H24a8 8 0 0 1 0-16h21.43l35.8-59.66a8 8 0 1 1 13.72 8.23L62.7 104h130.6l-32.25-59.43a8 8 0 0 1 13.72-8.23L210.57 96H232a8 8 0 0 1 8 8M58.95 200h138.1l14.67-88H44.28ZM96 168a8 8 0 0 0-8-8H72a8 8 0 0 0 0 16h16a8 8 0 0 0 8-8m56 0a8 8 0 0 0-8-8h-16a8 8 0 0 0 0 16h16a8 8 0 0 0 8-8m48 0a8 8 0 0 0-8-8h-16a8 8 0 0 0 0 16h16a8 8 0 0 0 8-8"/></svg>
+        <header class="text-center relative pt-2">
+            <!-- Ambient soft glow behind header -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-pink-300/20 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+            <!-- Main Title (Cookie Style) -->
+            <div class="my-2">
+                <h1 class="cookie-title text-4xl sm:text-5xl md:text-6xl cursor-default select-none transition-transform duration-300 hover:scale-105">
+                    The Better Buy 🛍️
+                </h1>
             </div>
-            <h1 class="text-3xl sm:text-4xl font-semibold text-brown-900">The Better Buy</h1>
-            <p class="text-brown-800/70 text-sm sm:text-base max-w-md mx-auto">
-                Make smart shopping decisions easily. Enter price, content size, and promotions to find which item gives you the most value per cost unit.
-            </p>
         </header>
 
         <!-- Options: 2 or 3 items -->
         <div class="flex justify-center">
-            <div class="bg-white p-1.5 rounded-full inline-flex shadow-sm border border-pink-100">
+            <div class="bg-white p-1.5 rounded-full inline-flex items-center shadow-sm border border-pink-100 gap-1.5">
+                <span class="text-sm font-medium text-brown-800 pl-3 select-none">Compare</span>
                 <button @click="numItems = 2" 
-                    :class="['px-6 py-2 rounded-full text-sm font-medium transition-all duration-300', numItems === 2 ? 'bg-pink-100 text-pink-500 shadow-sm' : 'text-brown-800 hover:bg-pink-50']">
-                    Compare 2 Items
+                    :class="['px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-300', numItems === 2 ? 'bg-pink-100 text-pink-500 shadow-sm' : 'text-brown-800 hover:bg-pink-50']">
+                    2
                 </button>
                 <button @click="numItems = 3" 
-                    :class="['px-6 py-2 rounded-full text-sm font-medium transition-all duration-300', numItems === 3 ? 'bg-pink-100 text-pink-500 shadow-sm' : 'text-brown-800 hover:bg-pink-50']">
-                    Compare 3 Items
+                    :class="['px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-300', numItems === 3 ? 'bg-pink-100 text-pink-500 shadow-sm' : 'text-brown-800 hover:bg-pink-50']">
+                    3
                 </button>
+                <span class="text-sm font-medium text-brown-800 pr-3 select-none">Items</span>
             </div>
         </div>
 
@@ -122,12 +166,12 @@
                             isBestValue(index) ? 'border-pink-400 shadow-soft best-value-card' : 'border-white shadow-card hover:shadow-soft hover:border-pink-50']">
                     
                     <!-- Crown for best value -->
-                    <div v-if="isBestValue(index)" class="absolute -top-4 -right-3 bg-pink-400 text-white p-2 rounded-full shadow-lg transform rotate-12">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path fill="currentColor" d="M235.69 82.52a12 12 0 0 0-11-2a11.9 11.9 0 0 0-7.36 7l-26.68 59.85l-51.52-87.35a12 12 0 0 0-20.73 0l-51.52 87.35L40.23 87.52a11.9 11.9 0 0 0-7.36-7a12 12 0 0 0-12.56 3.12A12 12 0 0 0 17 96.91l24 96A12 12 0 0 0 52.66 204h150.68a12 12 0 0 0 11.64-9.09l24-96a12 12 0 0 0-3.29-16.39ZM203.34 180H52.66l-18-72l35.69 15.28a12 12 0 0 0 15-4L128 46.85l42.66 72.43a12 12 0 0 0 15 4l35.69-15.28Z"/></svg>
+                    <div v-if="isBestValue(index)" class="absolute -top-4 -right-3 bg-white border-2 border-pink-300 w-11 h-11 flex items-center justify-center rounded-full shadow-md transform rotate-12 text-2xl select-none">
+                        👑
                     </div>
 
                     <div class="flex items-center space-x-3 mb-6">
-                        <div class="w-10 h-10 rounded-full bg-pink-50 flex items-center justify-center text-pink-400 font-bold text-lg">
+                        <div class="w-10 h-10 rounded-full bg-pink-50 flex items-center justify-center text-pink-500 font-bold text-lg">
                             {{ index + 1 }}
                         </div>
                         <h2 class="text-xl font-medium text-brown-900">Item {{ index + 1 }}</h2>
@@ -137,7 +181,7 @@
                         <!-- Promotion Type -->
                         <div>
                             <label class="block text-sm font-medium text-brown-800 mb-1">Promotion</label>
-                            <select v-model="item.promo" class="w-full bg-cream-50 border border-pink-100 text-brown-900 text-sm rounded-xl focus:ring-pink-200 focus:border-pink-300 block p-3 pr-10 outline-none transition-colors appearance-none cursor-pointer bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23594A4E%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_1rem_center] bg-[length:1.2em_1.2em]">
+                            <select v-model="item.promo" class="w-full bg-cream-50 border border-pink-100 text-brown-900 text-sm rounded-xl focus:ring-pink-200 focus:border-pink-300 block p-3 pr-10 outline-none transition-colors appearance-none cursor-pointer bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2376472e%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_1rem_center] bg-[length:1.2em_1.2em]">
                                 <option value="normal">Normal Price (No promo)</option>
                                 <option value="1get1">Buy 1 Get 1 Free</option>
                                 <option value="2get1">Buy 2 Get 1 Free</option>
@@ -152,7 +196,7 @@
 
                         <!-- Quantity (Show only when Normal promotion) -->
                         <div v-if="item.promo === 'normal'">
-                            <label class="block text-sm font-medium text-brown-800 mb-1">Quantity <span class="text-brown-800/50">(per pack or set)</span></label>
+                            <label class="block text-sm font-medium text-brown-800 mb-1">Quantity</label>
                             <input type="number" v-model.number="item.qty" min="1" step="1" @change="ensureMinQty(item)" @blur="ensureMinQty(item)" class="w-full bg-cream-50 border border-pink-100 text-brown-900 text-sm rounded-xl focus:ring-pink-200 focus:border-pink-300 block p-3 outline-none transition-colors">
                         </div>
 
@@ -194,23 +238,22 @@
 
         <!-- Summary Banner (Only shows when there's a calculation) -->
         <transition name="fade">
-            <div v-if="hasValidCalculations" class="max-w-4xl mx-auto bg-gradient-to-r from-pink-400 to-pink-300 rounded-3xl p-6 sm:p-8 text-white shadow-soft relative overflow-hidden flex flex-col sm:flex-row items-center justify-between text-center sm:text-left">
+            <div v-if="hasValidCalculations" class="max-w-4xl mx-auto bg-gradient-to-r from-pink-400 to-pink-300 rounded-3xl p-6 sm:p-8 text-brown-900 shadow-soft relative overflow-hidden flex flex-col sm:flex-row items-center justify-between text-center sm:text-left">
                 <!-- Decorative background elements -->
-                <div class="absolute -top-10 -right-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl"></div>
-                <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-white opacity-10 rounded-full blur-xl"></div>
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-white opacity-25 rounded-full blur-2xl"></div>
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-white opacity-25 rounded-full blur-xl"></div>
                 
                 <div class="relative z-10 space-y-1 mb-4 sm:mb-0">
-                    <h3 class="text-pink-50 text-sm font-medium">Comparison Summary</h3>
-                    <div class="text-2xl sm:text-3xl font-semibold">
-                        {{ winningMessage }}
+                    <h3 class="text-brown-800/80 text-sm font-medium">Comparison Summary</h3>
+                    <div class="text-2xl sm:text-3xl font-semibold text-brown-900 leading-normal" v-html="winningMessage">
                     </div>
                 </div>
                 
-                <div class="relative z-10 bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-3 border border-white/30 flex flex-col items-center">
-                    <span class="text-pink-50 text-xs mb-1">Best Value</span>
-                    <div class="flex items-baseline space-x-1">
+                <div class="relative z-10 bg-white/40 backdrop-blur-sm rounded-2xl px-6 py-3 border border-white/50 flex flex-col items-center shadow-sm">
+                    <span class="text-brown-800/80 text-xs mb-1 font-medium">Best Value</span>
+                    <div class="flex items-baseline space-x-1 text-brown-900">
                         <span class="text-3xl font-bold">{{ bestValue.toFixed(2) }}</span>
-                        <span class="text-sm">units / cost</span>
+                        <span class="text-sm font-medium">units / cost</span>
                     </div>
                 </div>
             </div>
@@ -218,7 +261,7 @@
 
         <!-- Footer -->
         <footer class="text-center pb-8 pt-4">
-            <p class="text-xs text-brown-800/40">Clean & Minimal Calculator. Made for smart shopping.</p>
+            <p class="text-xs text-brown-800/40">Enjoy your shopping 🛍️</p>
         </footer>
 
     </div>
@@ -315,10 +358,11 @@
                     if (bestResults.length === validResults.length) {
                         return "All items have the same value!";
                     } else if (bestResults.length > 1) {
-                        const names = bestResults.map(r => `Item ${r.index + 1}`).join(' & ');
+                        const names = bestResults.map(r => `<span class="inline-flex items-center bg-white text-brown-900 font-bold px-3 py-0.5 rounded-2xl shadow-sm border border-white/90 align-middle mx-1">Item ${r.index + 1}</span>`).join(' & ');
                         return `${names} are the best value!`;
                     } else {
-                        return `Item ${bestResults[0].index + 1} is the best value! 🎉`;
+                        const nameBadge = `<span class="inline-flex items-center bg-white text-brown-900 font-bold px-3.5 py-0.5 rounded-2xl shadow-sm border border-white/90 align-middle mr-1.5">Item ${bestResults[0].index + 1}</span>`;
+                        return `${nameBadge} is the best value! 🎉`;
                     }
                 });
 
